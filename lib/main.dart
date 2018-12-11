@@ -3,21 +3,19 @@ import 'package:english_words/english_words.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class RandomWordsState extends State<RandomWords> {
+  final _suggestions = <WordPair>[];
+
+  final _biggerFont = const TextStyle(fontSize: 18.0);
+  // TODO Add build method
   @override
   Widget build(BuildContext context) {
-    final wordPair = WordPair.random();
-    return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Welcome to Flutter'),
-          backgroundColor: Colors.amber,
-        ),
-        body: Center(
-          child: Text(wordPair.asPascalCase),
-        ),
-        drawer: Drawer(
+    return Scaffold (
+      appBar: AppBar(
+        title: Text('Startup Name Generator'),
+      ),
+      body: _buildSuggestions(),
+      drawer: Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the Drawer if there isn't enough vertical
           // space to fit everything.
@@ -51,8 +49,46 @@ class MyApp extends StatelessWidget {
               ),
             ],
           ),
-        ),
+        )
+    );
+  }
+
+  Widget _buildSuggestions() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16.0),
+      itemBuilder: (context, i) {
+        if (i.isOdd) return Divider();
+
+        final index = i ~/ 2;
+        if (index >= _suggestions.length) {
+          _suggestions.addAll(generateWordPairs().take(10));
+        }
+        return _buildRow(_suggestions[index]);
+      }
+    );
+  }
+
+  Widget _buildRow(WordPair pair) {
+    return ListTile(
+      title: Text(
+        pair.asPascalCase,
+        style: _biggerFont,
       ),
+    );
+  }
+}
+
+class RandomWords extends StatefulWidget {
+  @override
+  RandomWordsState createState() => new RandomWordsState();
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Startup Name Generator',
+      home: RandomWords(),
     );
   }
 }
